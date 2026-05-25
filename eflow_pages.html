@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Flow · SERC Portal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.6.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+
+/* ─── RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #F3F4F6;
+  color: #111827;
+  min-height: 100vh;
+}
+a { color: #1D4ED8; text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+
+/* ─── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --blue:        #1D4ED8;
+  --blue-hover:  #1e40af;
+  --blue-tint:   #EFF6FF;
+  --blue-light:  #DBEAFE;
+  --blue-border: #BFDBFE;
+  --teal:        #0F766E;
+  --teal-light:  #CCFBF1;
+  --teal-border: #6EE7B7;
+  --amber:       #B45309;
+  --amber-light: #FEF3C7;
+  --amber-border:#FCD34D;
+  --purple:      #6D28D9;
+  --purple-light:#EDE9FE;
+  --purple-border:#C4B5FD;
+  --red:         #DC2626;
+  --red-light:   #FEF2F2;
+  --red-border:  #FCA5A5;
+  --green:       #059669;
+  --green-light: #ECFDF5;
+  --green-border:#6EE7B7;
+  --t1: #111827;
+  --t2: #374151;
+  --t3: #6B7280;
+  --t4: #9CA3AF;
+  --border: #E5E7EB;
+  --bg-page: #F3F4F6;
+  --bg-card: #FFFFFF;
+  --bg-input:#FFFFFF;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+}
+
+/* ─── NAV / TOPBAR ─────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  height: 56px;
+  display: flex; align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--blue);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; font-weight: 700;
+  letter-spacing: -.5px; flex-shrink: 0;
+}
+.logo-text { font-size: 14px; font-weight: 600; color: var(--t1); }
+.logo-text em { color: var(--blue); font-style: normal; }
+
+.topbar-nav {
+  display: flex; align-items: center; gap: 2px; margin-left: auto;
+}
+.nav-link {
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; color: var(--t3);
+  border: none; background: none;
+  transition: background .15s, color .15s;
+}
+.nav-link:hover { background: var(--bg-page); color: var(--t1); }
+.nav-link.active { background: var(--blue-tint); color: var(--blue); }
+
+.topbar-user {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--border); border-radius: 20px;
+  margin-left: 8px; cursor: pointer;
+  font-size: 13px; color: var(--t2);
+  transition: background .15s;
+}
+.topbar-user:hover { background: var(--bg-page); }
+.avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--blue-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--blue);
+}
+
+/* ─── PAGE SHELL ───────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+.page-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* ─── PAGE HEADER ──────────────────────────────────────────── */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--t4); margin-bottom: .875rem;
+}
+.breadcrumb a { color: var(--blue); font-size: 12px; }
+.breadcrumb i { font-size: 12px; }
+
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.page-title { font-size: 22px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+.page-sub   { font-size: 14px; color: var(--t3); }
+.draft-tag  {
+  font-size: 11px; font-weight: 600;
+  background: var(--blue-tint); color: var(--blue);
+  border: 1px solid var(--blue-border);
+  padding: 3px 10px; border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ─── NOTICE BARS ──────────────────────────────────────────── */
+.notice {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-md);
+  font-size: 13px; line-height: 1.55;
+  margin-bottom: 1.25rem;
+  border: 1px solid;
+}
+.notice i { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.notice.info   { background: var(--blue-tint);  border-color: var(--blue-border);  color: var(--blue); }
+.notice.warn   { background: var(--amber-light); border-color: var(--amber-border); color: #92400E; }
+.notice.success{ background: var(--green-light); border-color: var(--green-border); color: #065F46; }
+.notice.purple { background: var(--purple-light);border-color: var(--purple-border);color: #4C1D95; }
+
+/* ─── CARD ─────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.card-header {
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.ci-blue   { background: var(--blue-light);   color: var(--blue); }
+.ci-teal   { background: var(--teal-light);   color: var(--teal); }
+.ci-amber  { background: var(--amber-light);  color: var(--amber); }
+.ci-purple { background: var(--purple-light); color: var(--purple); }
+.card-header-text .card-title { font-size: 13px; font-weight: 600; color: var(--t1); }
+.card-header-text .card-desc  { font-size: 11px; color: var(--t3); margin-top: 1px; }
+.card-body { padding: 1.25rem; }
+
+/* ─── FORM ELEMENTS ────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+  font-size: 11px; font-weight: 600; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .35px;
+  display: flex; align-items: center; gap: 5px;
+}
+.req { color: var(--red); }
+.opt {
+  font-size: 10px; font-weight: 500; text-transform: none; letter-spacing: 0;
+  background: var(--bg-page); color: var(--t4);
+  padding: 1px 7px; border-radius: 4px;
+}
+.field-hint { font-size: 11px; color: var(--t4); }
+.field-hint.active { color: var(--blue); }
+
+input[type=text], input[type=email], input[type=tel],
+input[type=password], input[type=date], select, textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 14px; color: var(--t1);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.08);
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.char-count { font-size: 11px; color: var(--t4); text-align: right; margin-top: 3px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.col-span-2 { grid-column: 1 / -1; }
+
+.divider { height: 1px; background: var(--border); margin: 1rem 0; }
+.sublabel {
+  font-size: 11px; font-weight: 600; color: var(--t4);
+  text-transform: uppercase; letter-spacing: .35px;
+  margin-bottom: .75rem;
+}
+
+/* ─── CATEGORY GRID ────────────────────────────────────────── */
+.cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.25rem; }
+.cat-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex; align-items: flex-start; gap: 10px;
+  transition: border-color .15s, background .15s;
+  background: var(--bg-card);
+  user-select: none;
+}
+.cat-card:hover { border-color: #93C5FD; background: #F8FAFF; }
+.cat-card.selected { border: 2px solid var(--blue); background: var(--blue-tint); }
+.cat-card input { display: none; }
+.cat-dot {
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 2px;
+  transition: border-color .15s, background .15s;
+}
+.cat-card.selected .cat-dot {
+  background: var(--blue); border-color: var(--blue);
+  box-shadow: 0 0 0 2px var(--blue-tint), 0 0 0 3.5px var(--blue);
+}
+.cat-info {}
+.cat-name { font-size: 13px; font-weight: 600; color: var(--t1); line-height: 1.3; }
+.cat-desc { font-size: 11px; color: var(--t3); margin-top: 2px; line-height: 1.4; }
+.cat-badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 1px 7px; border-radius: 4px; margin-top: 5px;
+}
+.cb-amber  { background: var(--amber-light); color: #92400E; }
+.cb-blue   { background: var(--blue-light);  color: var(--blue); }
+.cb-teal   { background: var(--teal-light);  color: var(--teal); }
+
+/* ─── PRIORITY CHIPS ───────────────────────────────────────── */
+.priority-row { display: flex; gap: 8px; }
+.pchip {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 8px 10px; font-size: 13px; font-weight: 600;
+  color: var(--t3); background: var(--bg-card); cursor: pointer;
+  transition: all .15s; user-select: none;
+}
+.pchip input { display: none; }
+.pchip.p-normal.sel { background: var(--green-light); border-color: var(--green-border); color: #065F46; }
+.pchip.p-high.sel   { background: var(--amber-light); border-color: var(--amber-border); color: #92400E; }
+.pchip.p-urgent.sel { background: var(--red-light);   border-color: var(--red-border);   color: #991B1B; }
+
+/* ─── FILE UPLOAD ──────────────────────────────────────────── */
+.upload-zone {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem 1.5rem;
+  text-align: center; cursor: pointer;
+  background: var(--bg-page);
+  transition: border-color .15s, background .15s;
+}
+.upload-zone:hover { border-color: #93C5FD; background: #F8FAFF; }
+.upload-zone i { font-size: 28px; color: var(--t4); display: block; margin-bottom: 8px; }
+.upload-title { font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+.upload-sub   { font-size: 12px; color: var(--t3); }
+.upload-sub strong { color: var(--blue); font-weight: 600; }
+.file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.file-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  background: var(--bg-page); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 13px;
+}
+.file-item i { color: var(--blue); font-size: 16px; }
+.file-name { flex: 1; color: var(--t2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 11px; color: var(--t4); }
+.file-rm { background: none; border: none; color: var(--t4); font-size: 15px; line-height: 1; padding: 0; display: flex; align-items: center; }
+.file-rm:hover { color: var(--red); }
+
+/* ─── BUTTONS ──────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; padding: 9px 20px; border: none; transition: all .15s; }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-hover); }
+.btn-primary:disabled { background: #93C5FD; cursor: not-allowed; transform: none; }
+.btn-secondary { background: none; border: 1px solid var(--border); color: var(--t2); }
+.btn-secondary:hover { background: var(--bg-page); }
+.btn-verify {
+  background: none; border: 1px solid var(--border);
+  color: var(--blue); font-size: 13px; font-weight: 600;
+  padding: 0 14px; border-radius: var(--radius-sm); white-space: nowrap;
+  transition: background .15s;
+}
+.btn-verify:hover { background: var(--blue-tint); }
+
+.verify-row { display: flex; gap: 8px; }
+.verify-row input { flex: 1; }
+
+.vbadge {
+  display: none; align-items: center; gap: 6px;
+  font-size: 12px; padding: 6px 10px;
+  border-radius: var(--radius-sm); margin-top: 5px; border: 1px solid;
+}
+.vb-pending { background: var(--amber-light); border-color: var(--amber-border); color: #92400E; }
+.vb-ok      { background: var(--green-light); border-color: var(--green-border); color: #065F46; }
+.vb-err     { background: var(--red-light);   border-color: var(--red-border);   color: #991B1B; }
+.vb-err a   { color: #991B1B; font-weight: 700; }
+
+/* ─── FORM FOOTER / CARD FOOTER ────────────────────────────── */
+.form-footer {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.footer-note { font-size: 12px; color: var(--t4); display: flex; align-items: center; gap: 6px; }
+.footer-note i { font-size: 15px; }
+.btn-group { display: flex; align-items: center; gap: 8px; }
+.signin-hint { font-size: 13px; color: var(--t3); }
+
+/* ─── TYPE CARDS (account creation) ───────────────────────── */
+.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.type-card {
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 1rem 1.25rem; cursor: pointer;
+  display: flex; align-items: flex-start; gap: 12px;
+  transition: border-color .15s, background .15s; background: var(--bg-card);
+  user-select: none;
+}
+.type-card:hover { border-color: #93C5FD; background: #F8FAFF; }
+.type-card.selected { border: 2px solid var(--blue); background: var(--blue-tint); }
+.type-card input { display: none; }
+.type-icon {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.ti-entity { background: var(--blue-light); color: var(--blue); }
+.ti-indiv  { background: var(--teal-light); color: var(--teal); }
+.type-name { font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+.type-desc { font-size: 12px; color: var(--t3); line-height: 1.4; }
+
+/* ─── CAMDIGIKEY BLOCK ─────────────────────────────────────── */
+.cdk-block { display: flex; gap: 2rem; align-items: flex-start; }
+.qr-area { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.qr-frame {
+  width: 148px; height: 148px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg-card); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.qr-frame svg { width: 120px; height: 120px; }
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: var(--blue); opacity: 0;
+  animation: scanDown 1.8s linear infinite;
+}
+.qr-frame.scanning .scan-line { opacity: 1; }
+@keyframes scanDown { 0%{ top:0 } 100%{ top:100% } }
+.qr-hint { font-size: 11px; color: var(--t4); text-align: center; }
+.qr-refresh { background: none; border: none; color: var(--blue); font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.qr-refresh:hover { text-decoration: underline; }
+
+.cdk-info { flex: 1; }
+.cdk-gov-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--blue-tint); border: 1px solid var(--blue-border);
+  color: var(--blue); font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px; margin-bottom: 10px;
+}
+.cdk-title { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+.cdk-desc  { font-size: 13px; color: var(--t2); line-height: 1.6; margin-bottom: 14px; }
+.cdk-steps { display: flex; flex-direction: column; gap: 8px; }
+.cdk-step  { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--t2); }
+.step-num  {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue-light); color: var(--blue);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.cdk-verified {
+  display: none; align-items: center; gap: 12px;
+  background: var(--green-light); border: 1px solid var(--green-border);
+  border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 1rem;
+}
+.cdk-verified-icon {
+  width: 38px; height: 38px; border-radius: 50%; background: #D1FAE5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--green); flex-shrink: 0;
+}
+.cdk-v-name   { font-size: 14px; font-weight: 600; color: #065F46; }
+.cdk-v-detail { font-size: 12px; color: var(--green); margin-top: 2px; }
+.btn-cdk-change {
+  margin-left: auto; background: none;
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm); padding: 5px 12px;
+  font-size: 12px; font-weight: 600; color: #065F46;
+}
+
+/* ─── PASSWORD STRENGTH ────────────────────────────────────── */
+.pw-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.pw-bar { height: 100%; width: 0; border-radius: 2px; transition: width .3s, background .3s; }
+
+/* ─── TERMS ────────────────────────────────────────────────── */
+.terms-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--bg-page); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 12px; margin-bottom: 1rem;
+}
+.terms-row input[type=checkbox] { width: 15px; height: 15px; margin-top: 2px; accent-color: var(--blue); flex-shrink: 0; }
+.terms-text { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+/* ─── OR DIVIDER ───────────────────────────────────────────── */
+.or-divider {
+  display: flex; align-items: center; gap: 12px; margin: 1.5rem 0;
+}
+.or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+.or-divider span { font-size: 12px; color: var(--t4); white-space: nowrap; }
+
+/* ─── SUCCESS CARD ─────────────────────────────────────────── */
+.success-state {
+  display: none; text-align: center;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 3rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+.success-icon {
+  width: 56px; height: 56px; background: var(--green-light);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem; font-size: 26px; color: var(--green);
+}
+.success-title { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 8px; }
+.success-msg   { font-size: 14px; color: var(--t3); margin-bottom: 1.5rem; line-height: 1.6; }
+.ref-id-block  {
+  background: var(--blue-tint); border: 1px solid var(--blue-border);
+  border-radius: var(--radius-md); padding: 12px 28px; display: inline-block; margin-bottom: 1.5rem;
+}
+.ref-id-label { font-size: 11px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.ref-id-value { font-size: 22px; font-weight: 700; color: var(--blue); letter-spacing: 2px; }
+
+/* ─── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .grid-2, .grid-3, .cat-grid, .type-grid { grid-template-columns: 1fr; }
+  .cdk-block { flex-direction: column; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .form-footer { flex-direction: column; align-items: stretch; }
+  .btn-group { justify-content: flex-end; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══════════════════════════════════════════════ -->
+<header class="topbar">
+  <a class="topbar-logo" href="#">
+    <div class="logo-mark">eF</div>
+    <span class="logo-text">E-<em>Flow</em> · SERC Portal</span>
+  </a>
+  <nav class="topbar-nav">
+    <button class="nav-link" onclick="showPage('registration')">Account Registration</button>
+    <button class="nav-link" onclick="showPage('submission')">Submit Document</button>
+  </nav>
+  <div class="topbar-user">
+    <div class="avatar">SC</div>
+    <span>Sereyboth Corp.</span>
+    <i class="ti ti-chevron-down" style="font-size:12px;color:var(--t4)"></i>
+  </div>
+</header>
+
+<!-- ═══ PAGE 1 — ACCOUNT REGISTRATION ════════════════════════ -->
+<div class="page active" id="page-registration">
+<div class="page-content" style="max-width:700px;">
+
+  <div class="breadcrumb">
+    <a href="#">Home</a>
+    <i class="ti ti-chevron-right"></i>
+    <span>Create Account</span>
+  </div>
+  <div class="page-header">
+    <div>
+      <div class="page-title">Create your account</div>
+      <div class="page-sub">Use CamDigiKey for instant registration, or fill in the form manually.</div>
+    </div>
+  </div>
+
+  <div id="reg-form">
+
+    <!-- CamDigiKey -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-blue"><i class="ti ti-qrcode"></i></div>
+        <div class="card-header-text">
+          <div class="card-title">Register with CamDigiKey</div>
+          <div class="card-desc">Recommended — instant government-verified identity, no manual data entry</div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <div id="cdk-scan" class="cdk-block">
+          <div class="qr-area">
+            <div class="qr-frame" id="qr-frame" onclick="simulateScan()" title="Click to simulate scan">
+              <div class="scan-line" id="scan-line"></div>
+              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="8" width="40" height="40" rx="4" stroke="currentColor" stroke-width="3" fill="none"/>
+                <rect x="18" y="18" width="20" height="20" rx="2" fill="currentColor"/>
+                <rect x="72" y="8" width="40" height="40" rx="4" stroke="currentColor" stroke-width="3" fill="none"/>
+                <rect x="82" y="18" width="20" height="20" rx="2" fill="currentColor"/>
+                <rect x="8" y="72" width="40" height="40" rx="4" stroke="currentColor" stroke-width="3" fill="none"/>
+                <rect x="18" y="82" width="20" height="20" rx="2" fill="currentColor"/>
+                <rect x="72" y="72" width="8" height="8" fill="currentColor"/>
+                <rect x="84" y="72" width="8" height="8" fill="currentColor"/>
+                <rect x="96" y="72" width="16" height="8" fill="currentColor"/>
+                <rect x="72" y="84" width="16" height="8" fill="currentColor"/>
+                <rect x="92" y="84" width="8" height="8" fill="currentColor"/>
+                <rect x="72" y="96" width="8" height="16" fill="currentColor"/>
+                <rect x="84" y="96" width="16" height="8" fill="currentColor"/>
+                <rect x="104" y="96" width="8" height="16" fill="currentColor"/>
+                <rect x="56" y="8" width="8" height="8" fill="currentColor"/>
+                <rect x="56" y="20" width="8" height="8" fill="currentColor"/>
+                <rect x="56" y="32" width="8" height="8" fill="currentColor"/>
+                <rect x="8"  y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="20" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="32" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="44" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="56" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="72" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="84" y="56" width="8" height="8" fill="currentColor"/>
+                <rect x="96" y="56" width="16" height="8" fill="currentColor"/>
+                <rect x="56" y="44" width="8" height="8" fill="currentColor"/>
+                <rect x="56" y="68" width="8" height="8" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="qr-hint">Scan with CamDigiKey app</div>
+            <button class="qr-refresh" onclick="simulateScan()"><i class="ti ti-refresh" style="font-size:12px"></i> Refresh</button>
+          </div>
+          <div class="cdk-info">
+            <div class="cdk-gov-badge"><i class="ti ti-shield-check" style="font-size:12px"></i> Official government eKYC</div>
+            <div class="cdk-steps">
+              <div class="cdk-step"><div class="step-num">1</div> Open the CamDigiKey app on your phone</div>
+              <div class="cdk-step"><div class="step-num">2</div> Tap "Scan QR" and point at the code</div>
+              <div class="cdk-step"><div class="step-num">3</div> Confirm on your phone — done</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verified state -->
+        <div class="cdk-verified" id="cdk-verified">
+          <div class="cdk-verified-icon"><i class="ti ti-circle-check"></i></div>
+          <div>
+            <div class="cdk-v-name">Chan Dara</div>
+            <div class="cdk-v-detail">Identity verified via CamDigiKey · National ID 012·····78</div>
+          </div>
+          <button class="btn-cdk-change" onclick="resetCdk()">Change</button>
+        </div>
+
+        <div id="cdk-footer-link" style="display:none; margin-top:.5rem;">
+          <p style="font-size:12px;color:var(--t4)">Don't have CamDigiKey? <a href="#">Download the app →</a></p>
+        </div>
+
+        <!-- CamDigiKey-only submit -->
+        <div id="cdk-only-submit" style="display:none; margin-top:1rem;">
+          <div class="terms-row">
+            <input type="checkbox" id="cdk-terms" onchange="toggleCdkBtn()">
+            <div class="terms-text">I confirm the information retrieved from CamDigiKey is accurate and I agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</div>
+          </div>
+          <div class="form-footer">
+            <span class="signin-hint">Already have an account? <a href="#">Sign in</a></span>
+            <button class="btn btn-primary" id="btn-cdk" onclick="submitReg('cdk')" disabled>
+              <i class="ti ti-send" style="font-size:14px"></i> Create account
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="or-divider"><span>or register manually without CamDigiKey</span></div>
+
+    <!-- Account type -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-blue"><i class="ti ti-id"></i></div>
+        <div class="card-header-text">
+          <div class="card-title">Account type</div>
+          <div class="card-desc">Select the type that best describes you</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="type-grid">
+          <label class="type-card" id="tc-entity" onclick="pickType('entity')">
+            <input type="radio" name="actype" value="entity">
+            <div class="type-icon ti-entity"><i class="ti ti-building"></i></div>
+            <div>
+              <div class="type-name">Legal entity</div>
+              <div class="type-desc">Licensed companies, brokers, fund managers, and other entities supervised by SERC</div>
+            </div>
+          </label>
+          <label class="type-card" id="tc-individual" onclick="pickType('individual')">
+            <input type="radio" name="actype" value="individual">
+            <div class="type-icon ti-indiv"><i class="ti ti-user"></i></div>
+            <div>
+              <div class="type-name">Individual</div>
+              <div class="type-desc">Natural persons — including the general public — submitting documents or inquiries to SERC</div>
+            </div>
+          </label>
+        </div>
+        <div id="entity-warn" class="notice warn" style="display:none; margin-bottom:0;">
+          <i class="ti ti-alert-triangle"></i>
+          <div>Each company may only register <strong>one account</strong>. Your license number and company name will be verified against SERC records. If an account already exists, you will be directed to the account administrator.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal entity fields -->
+    <div id="sec-entity" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon ci-blue"><i class="ti ti-building"></i></div>
+          <div class="card-header-text">
+            <div class="card-title">Company information</div>
+            <div class="card-desc">Must match your SERC license or registration records</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Company name <span class="req">*</span></label>
+              <input type="text">
+              <p class="field-hint">Must exactly match your registered name</p>
+            </div>
+            <div class="field">
+              <label class="field-label">Company name in Khmer <span class="opt">optional</span></label>
+              <input type="text">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Entity type <span class="req">*</span></label>
+              <select>
+                <option value="">— Select —</option>
+                <option>Broker-dealer</option>
+                <option>Investment adviser</option>
+                <option>Fund manager</option>
+                <option>Underwriter</option>
+                <option>Securities issuer</option>
+                <option>Other regulated entity</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">License / registration number <span class="req">*</span></label>
+              <div class="verify-row">
+                <input type="text" id="lic-num">
+                <button class="btn-verify" onclick="verifyLic()">Verify</button>
+              </div>
+              <div class="vbadge vb-pending" id="vb-p"><i class="ti ti-loader" style="font-size:13px"></i> Checking SERC records…</div>
+              <div class="vbadge vb-ok"      id="vb-ok"><i class="ti ti-circle-check" style="font-size:13px"></i> Verified — no existing account found</div>
+              <div class="vbadge vb-err"     id="vb-err"><i class="ti ti-alert-circle" style="font-size:13px"></i> Account already exists. <a href="#">Contact admin →</a></div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Registered office address <span class="req">*</span></label>
+            <input type="text">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon ci-teal"><i class="ti ti-user-check"></i></div>
+          <div class="card-header-text">
+            <div class="card-title">Account administrator</div>
+            <div class="card-desc">The person responsible for managing this company account</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="grid-3">
+            <div class="field">
+              <label class="field-label">Full name <span class="req">*</span></label>
+              <input type="text">
+            </div>
+            <div class="field">
+              <label class="field-label">Position / title <span class="req">*</span></label>
+              <input type="text">
+            </div>
+            <div class="field">
+              <label class="field-label">National ID / passport <span class="req">*</span></label>
+              <input type="text">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Phone number <span class="req">*</span></label>
+              <input type="tel">
+            </div>
+            <div class="field">
+              <label class="field-label">Work email address <span class="req">*</span></label>
+              <input type="email">
+              <p class="field-hint">Verification link will be sent here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Individual fields -->
+    <div id="sec-individual" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon ci-teal"><i class="ti ti-user"></i></div>
+          <div class="card-header-text">
+            <div class="card-title">Personal information</div>
+            <div class="card-desc">As it appears on your national ID or passport</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Full name (Latin) <span class="req">*</span></label>
+              <input type="text">
+            </div>
+            <div class="field">
+              <label class="field-label">Full name in Khmer <span class="opt">optional</span></label>
+              <input type="text">
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label class="field-label">Date of birth <span class="req">*</span></label>
+              <input type="text" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+            </div>
+            <div class="field">
+              <label class="field-label">Nationality <span class="req">*</span></label>
+              <select><option>Cambodian</option><option>Other</option></select>
+            </div>
+            <div class="field">
+              <label class="field-label">Gender <span class="opt">optional</span></label>
+              <select><option value="">— Select —</option><option>Male</option><option>Female</option><option>Prefer not to say</option></select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">ID type <span class="req">*</span></label>
+              <select><option value="">— Select —</option><option>National ID card</option><option>Passport</option></select>
+            </div>
+            <div class="field">
+              <label class="field-label">ID / passport number <span class="req">*</span></label>
+              <input type="text">
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="sublabel">Contact details</div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Phone number <span class="req">*</span></label>
+              <input type="tel">
+            </div>
+            <div class="field">
+              <label class="field-label">Email address <span class="req">*</span></label>
+              <input type="email">
+              <p class="field-hint">Verification link will be sent here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password + submit (manual) -->
+    <div id="sec-credentials" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon ci-purple"><i class="ti ti-lock"></i></div>
+          <div class="card-header-text">
+            <div class="card-title">Set your password</div>
+            <div class="card-desc">Used to sign in when not using CamDigiKey</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Password <span class="req">*</span></label>
+              <input type="password" id="pw1" oninput="checkPw()">
+              <div class="pw-bar-wrap"><div class="pw-bar" id="pw-bar"></div></div>
+              <p class="field-hint" id="pw-hint">At least 8 characters, a number, and a symbol</p>
+            </div>
+            <div class="field">
+              <label class="field-label">Confirm password <span class="req">*</span></label>
+              <input type="password" id="pw2" oninput="checkPw2()">
+              <p class="field-hint" id="pw2-hint"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" id="man-terms" onchange="toggleManBtn()">
+        <div class="terms-text">I confirm all information provided is accurate and complete. I agree to the <a href="#">SERC E-Flow Terms of Use</a> and <a href="#">Privacy Policy</a>, and I acknowledge that SERC may verify the details submitted.</div>
+      </div>
+
+      <div class="form-footer">
+        <span class="signin-hint">Already have an account? <a href="#">Sign in</a></span>
+        <button class="btn btn-primary" id="btn-man" onclick="submitReg('manual')" disabled>
+          <i class="ti ti-send" style="font-size:14px"></i> Create account
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /#reg-form -->
+
+  <!-- Success -->
+  <div class="success-state" id="reg-success">
+    <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+    <div class="success-title">Account created successfully</div>
+    <p class="success-msg" id="reg-success-msg"></p>
+    <div class="ref-id-block">
+      <div class="ref-id-label">Account ID</div>
+      <div class="ref-id-value" id="reg-acc-id">—</div>
+    </div><br>
+    <button class="btn btn-primary" onclick="showPage('submission')" style="margin:0 auto;">
+      Go to dashboard <i class="ti ti-arrow-right" style="font-size:14px"></i>
+    </button>
+  </div>
+
+</div>
+</div><!-- /#page-registration -->
+
+
+<!-- ═══ PAGE 2 — GENERAL DOCUMENT SUBMISSION ═════════════════ -->
+<div class="page" id="page-submission">
+<div class="page-content">
+
+  <div class="breadcrumb">
+    <a href="#">Dashboard</a>
+    <i class="ti ti-chevron-right"></i>
+    <span>Submit Document</span>
+  </div>
+  <div class="page-header">
+    <div>
+      <div class="page-title">General Document Submission</div>
+    </div>
+    <div class="draft-tag" id="draft-tag">Draft — unsaved</div>
+  </div>
+
+  <div class="notice info">
+    <i class="ti ti-info-circle"></i>
+    <div>Upon submission, you will receive a <strong>Reference ID</strong> and email confirmation. Track your submission under <strong>My Submissions</strong>.</div>
+  </div>
+
+  <div id="sub-form">
+
+    <!-- Category & Subject -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-blue"><i class="ti ti-tag"></i></div>
+        <div class="card-header-text">
+          <div class="card-title">Category & subject</div>
+        </div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:1.25rem;">
+
+        <div class="field">
+          <label class="field-label" for="cat-select">Category of submission <span class="req">*</span></label>
+          <select id="cat-select" onchange="pickCat(this.value)">
+            <option value="">— Select a category —</option>
+            <option value="securities-businesses">Securities businesses</option>
+            <option value="derivatives-businesses">Derivatives businesses</option>
+            <option value="cis-business">Collective investment scheme business</option>
+            <option value="digital-asset">Digital asset businesses</option>
+            <option value="digital-sandbox">Digital securities sandbox</option>
+            <option value="securities-issuance">Securities issuance supervision</option>
+            <option value="market-participants">Market participants in the securities sector</option>
+            <option value="market-supervision">Securities market supervision</option>
+            <option value="cash-settlement">Cash settlement agent in the securities sector</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Subject <span class="req">*</span></label>
+          <input type="text" id="sub-subject" maxlength="200" oninput="countChars(this,'sub-count')">
+          <div class="char-count"><span id="sub-count">0</span> / 200</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" id="ref-label">Reference document / SERC letter <span class="opt">optional</span></label>
+            <input type="text" id="ref-doc">
+            <p class="field-hint" id="ref-hint">Required if category is "Response to SERC"</p>
+          </div>
+          <div class="field">
+            <label class="field-label">Priority <span class="req">*</span></label>
+            <div class="priority-row">
+              <label class="pchip p-normal sel" id="pc-normal">
+                <input type="radio" name="priority" value="normal" checked onchange="pickPriority()">
+                <i class="ti ti-circle-check" style="font-size:14px"></i> Normal
+              </label>
+              <label class="pchip p-high" id="pc-high">
+                <input type="radio" name="priority" value="high" onchange="pickPriority()">
+                <i class="ti ti-alert-triangle" style="font-size:14px"></i> High
+              </label>
+              <label class="pchip p-urgent" id="pc-urgent">
+                <input type="radio" name="priority" value="urgent" onchange="pickPriority()">
+                <i class="ti ti-flame" style="font-size:14px"></i> Urgent
+              </label>
+            </div>
+            <p class="field-hint">Use Urgent only for time-critical regulatory matters</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sender -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-teal"><i class="ti ti-building"></i></div>
+        <div class="card-header-text">
+          <div class="card-title">Sender information</div>
+        </div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label">Company / entity name <span class="req">*</span></label>
+            <input type="text">
+          </div>
+          <div class="field">
+            <label class="field-label">License / registration number <span class="opt">optional</span></label>
+            <input type="text">
+            <p class="field-hint">Leave blank if submitting as general public</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="sublabel">Contact person</div>
+        <div class="grid-3">
+          <div class="field">
+            <label class="field-label">Full name <span class="req">*</span></label>
+            <input type="text" id="s-name">
+          </div>
+          <div class="field">
+            <label class="field-label">Title / position <span class="opt">optional</span></label>
+            <input type="text">
+          </div>
+          <div class="field">
+            <label class="field-label">Department <span class="opt">optional</span></label>
+            <input type="text">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label">Contact number <span class="req">*</span></label>
+            <input type="tel" id="s-phone">
+          </div>
+          <div class="field">
+            <label class="field-label">Email address <span class="req">*</span></label>
+            <input type="email" id="s-email">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ci-amber"><i class="ti ti-paperclip"></i></div>
+        <div class="card-header-text">
+          <div class="card-title">Attachments</div>
+          <div class="card-desc">Upload supporting documents for your submission</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="e=>e.preventDefault()" ondrop="handleDrop(event)">
+          <i class="ti ti-cloud-upload"></i>
+          <div class="upload-title">Drag & drop files here</div>
+          <div class="upload-sub">or <strong>browse to upload</strong> · PDF, DOCX, XLSX, JPG, PNG · Max 25 MB each</div>
+        </div>
+        <input type="file" id="file-input" multiple accept=".pdf,.docx,.xlsx,.jpg,.png" style="display:none" onchange="handleFiles(this.files)">
+        <div class="file-list" id="file-list"></div>
+        <p class="field-hint" style="margin-top:8px;">Up to 10 files. All attachments are encrypted in transit and at rest.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <div class="footer-note">
+        <i class="ti ti-lock"></i>
+        All submissions are encrypted and stored under SERC's data protection policy.
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="saveDraft()">Save draft</button>
+        <button class="btn btn-primary" onclick="submitDoc()">
+          <i class="ti ti-send" style="font-size:14px"></i> Submit to SERC
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /#sub-form -->
+
+  <!-- Success -->
+  <div class="success-state" id="sub-success">
+    <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+    <div class="success-title">Submission received</div>
+    <p class="success-msg">Your document has been submitted to SERC. A confirmation will be sent to your registered email address.</p>
+    <div class="ref-id-block">
+      <div class="ref-id-label">Reference ID</div>
+      <div class="ref-id-value" id="sub-ref-id">—</div>
+    </div><br>
+    <button class="btn btn-primary" style="margin:0 auto;" onclick="resetSub()">
+      Submit another document
+    </button>
+  </div>
+
+</div>
+</div><!-- /#page-submission -->
+
+
+<script>
+// ── Navigation ──────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = { registration: 0, submission: 1 };
+  document.querySelectorAll('.nav-link')[map[name]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+// set active on load
+document.querySelectorAll('.nav-link')[0].classList.add('active');
+
+// ── Registration ─────────────────────────────────────────
+let acType = null;
+
+function simulateScan() {
+  const frame = document.getElementById('qr-frame');
+  frame.classList.add('scanning');
+  setTimeout(() => {
+    frame.classList.remove('scanning');
+    document.getElementById('cdk-scan').style.display = 'none';
+    document.getElementById('cdk-verified').style.display = 'flex';
+    document.getElementById('cdk-footer-link').style.display = 'block';
+    document.getElementById('cdk-only-submit').style.display = 'block';
+    // hide manual sections
+    document.getElementById('sec-entity').style.display = 'none';
+    document.getElementById('sec-individual').style.display = 'none';
+    document.getElementById('sec-credentials').style.display = 'none';
+  }, 2000);
+}
+
+function resetCdk() {
+  document.getElementById('cdk-scan').style.display = 'flex';
+  document.getElementById('cdk-verified').style.display = 'none';
+  document.getElementById('cdk-footer-link').style.display = 'none';
+  document.getElementById('cdk-only-submit').style.display = 'none';
+}
+
+function toggleCdkBtn() {
+  document.getElementById('btn-cdk').disabled = !document.getElementById('cdk-terms').checked;
+}
+
+function pickType(t) {
+  acType = t;
+  ['tc-entity','tc-individual'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  document.getElementById('tc-' + t).classList.add('selected');
+  document.getElementById('entity-warn').style.display = t === 'entity' ? 'flex' : 'none';
+  document.getElementById('sec-entity').style.display = t === 'entity' ? 'block' : 'none';
+  document.getElementById('sec-individual').style.display = t === 'individual' ? 'block' : 'none';
+  document.getElementById('sec-credentials').style.display = 'block';
+  // reset cdk verified state if manual picked
+  document.getElementById('cdk-scan').style.display = 'flex';
+  document.getElementById('cdk-verified').style.display = 'none';
+  document.getElementById('cdk-footer-link').style.display = 'none';
+  document.getElementById('cdk-only-submit').style.display = 'none';
+}
+
+function verifyLic() {
+  ['vb-p','vb-ok','vb-err'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('vb-p').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('vb-p').style.display = 'none';
+    document.getElementById('vb-ok').style.display = 'flex';
+  }, 1800);
+}
+
+function checkPw() {
+  const v = document.getElementById('pw1').value;
+  const bar = document.getElementById('pw-bar');
+  const hint = document.getElementById('pw-hint');
+  if (!v) { bar.style.width = '0'; return; }
+  let s = 0;
+  if (v.length >= 8) s++;
+  if (/[0-9]/.test(v)) s++;
+  if (/[^a-zA-Z0-9]/.test(v)) s++;
+  if (v.length >= 12) s++;
+  const cfg = [['#EF4444','25%','Too short'],['#F97316','50%','Weak'],['#EAB308','75%','Good'],['#22C55E','100%','Strong']];
+  const i = Math.min(s - 1, 3);
+  bar.style.background = cfg[i][0]; bar.style.width = cfg[i][1];
+  hint.textContent = cfg[i][2]; hint.style.color = cfg[i][0];
+}
+
+function checkPw2() {
+  const p1 = document.getElementById('pw1').value;
+  const p2 = document.getElementById('pw2').value;
+  const hint = document.getElementById('pw2-hint');
+  if (!p2) { hint.textContent = ''; return; }
+  hint.textContent = p1 === p2 ? '✓ Passwords match' : 'Passwords do not match';
+  hint.style.color = p1 === p2 ? '#059669' : '#DC2626';
+}
+
+function toggleManBtn() {
+  document.getElementById('btn-man').disabled = !document.getElementById('man-terms').checked;
+}
+
+function submitReg(mode) {
+  const prefix = (mode === 'cdk' || acType === 'individual') ? 'IND' : 'ENT';
+  const id = prefix + '-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+  document.getElementById('reg-acc-id').textContent = id;
+  const msgs = {
+    cdk:    'Your identity was verified via CamDigiKey. Your account is now active — no further verification required.',
+    manual: prefix === 'ENT'
+      ? 'A verification email has been sent to the account administrator. SERC will review and activate your company account within 1–2 business days.'
+      : 'A verification email has been sent. Please verify your email address to activate your account.'
+  };
+  document.getElementById('reg-success-msg').textContent = msgs[mode] || msgs.manual;
+  document.getElementById('reg-form').style.display = 'none';
+  document.getElementById('reg-success').style.display = 'block';
+}
+
+// ── Submission ───────────────────────────────────────────
+let currentCat = null;
+let uploadedFiles = [];
+
+function pickCat(val) {
+  currentCat = val || null;
+}
+
+function pickPriority() {
+  const val = document.querySelector('input[name="priority"]:checked').value;
+  ['normal','high','urgent'].forEach(v => {
+    document.getElementById('pc-' + v).classList.toggle('sel', v === val);
+  });
+}
+
+function countChars(el, spanId) {
+  document.getElementById(spanId).textContent = el.value.length;
+}
+
+function handleFiles(files) {
+  for (const f of files) {
+    if (uploadedFiles.length >= 10) break;
+    if (!uploadedFiles.find(x => x.name === f.name)) uploadedFiles.push(f);
+  }
+  renderFiles();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  handleFiles(e.dataTransfer.files);
+}
+
+function removeFile(name) {
+  uploadedFiles = uploadedFiles.filter(f => f.name !== name);
+  renderFiles();
+}
+
+function renderFiles() {
+  const list = document.getElementById('file-list');
+  list.innerHTML = '';
+  uploadedFiles.forEach(f => {
+    const size = f.size > 1048576 ? (f.size / 1048576).toFixed(1) + ' MB' : Math.round(f.size / 1024) + ' KB';
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<i class="ti ti-file-text"></i><span class="file-name">${f.name}</span><span class="file-size">${size}</span><button class="file-rm" onclick="removeFile('${f.name}')"><i class="ti ti-x"></i></button>`;
+    list.appendChild(item);
+  });
+}
+
+function saveDraft() {
+  const tag = document.getElementById('draft-tag');
+  tag.textContent = 'Draft saved · ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
+function submitDoc() {
+  const cat   = document.getElementById('cat-select').value;
+  const subject = document.getElementById('sub-subject').value.trim();
+  const name    = document.getElementById('s-name').value.trim();
+  const phone   = document.getElementById('s-phone').value.trim();
+  const email   = document.getElementById('s-email').value.trim();
+  if (!cat || !subject || !name || !phone || !email) {
+    alert('Please fill in all required fields and select a category before submitting.');
+    return;
+  }
+  const id = 'DOC-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+  document.getElementById('sub-ref-id').textContent = id;
+  document.getElementById('sub-form').style.display = 'none';
+  document.getElementById('sub-success').style.display = 'block';
+}
+
+function resetSub() {
+  uploadedFiles = [];
+  currentCat = null;
+  document.getElementById('cat-select').value = '';
+  document.getElementById('sub-form').style.display = 'block';
+  document.getElementById('sub-success').style.display = 'none';
+  document.getElementById('sub-form').querySelectorAll('input[type=text], input[type=email], input[type=tel], textarea').forEach(el => el.value = '');
+  document.getElementById('sub-count').textContent = '0';
+  document.getElementById('draft-tag').textContent = 'Draft — unsaved';
+  renderFiles();
+}
+</script>
+</body>
+</html>
